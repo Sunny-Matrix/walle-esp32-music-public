@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101820">
+  <title>瓦力控制台</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark" aria-hidden="true"><span></span><span></span></div>
+      <div class="brand-copy"><strong>瓦力 WALI</strong><small>AI ROBOT CONSOLE</small></div>
+      <div class="top-actions">
+        <button class="icon-button" id="themeButton" title="切换主题" aria-label="切换主题">◐</button>
+        <button class="icon-button" id="settingsButton" title="设置" aria-label="设置">⚙</button>
+      </div>
+    </header>
+
+    <section class="status-strip">
+      <div class="robot-status"><span class="status-dot" id="statusDot"></span><span id="statusText">未连接</span></div>
+      <span class="status-divider"></span><span class="status-value" id="latencyText">-- ms</span>
+      <span class="status-divider"></span><span class="status-value" id="batteryText">电量 --</span>
+      <button class="connection-button" id="connectButton">连接设备</button>
+    </section>
+
+    <nav class="tabbar" aria-label="功能导航">
+      <button class="tab active" data-tab="drive"><span>◉</span>驾驶</button>
+      <button class="tab" data-tab="actions"><span>✦</span>动作</button>
+      <button class="tab" data-tab="lights"><span>✺</span>灯光</button>
+      <button class="tab" data-tab="servos"><span>⌁</span>舵机</button>
+      <button class="tab" data-tab="music"><span>♫</span>音乐</button>
+      <button class="tab" data-tab="settings"><span>⚙</span>设置</button>
+    </nav>
+
+    <section class="page active" id="drive">
+      <div class="section-heading"><div><span class="eyebrow">MOTION / 01</span><h1>驾驶瓦力</h1></div><span class="live-chip"><i></i>低延迟</span></div>
+      <div class="drive-layout">
+        <div class="joystick-wrap">
+          <div class="joystick" id="joystick" aria-label="虚拟摇杆">
+            <div class="crosshair horizontal"></div><div class="crosshair vertical"></div>
+            <div class="joystick-knob" id="joystickKnob"><span>+</span></div>
+          </div>
+          <div class="joystick-readout"><span id="joystickX">X 0</span><span id="joystickY">Y 0</span></div>
+        </div>
+        <div class="drive-buttons">
+          <button class="drive-button wide" data-command="forward"><b>↑</b><span>前进</span><small>FORWARD</small></button>
+          <div class="drive-row"><button class="drive-button" data-command="left"><b>←</b><span>左转</span><small>LEFT</small></button><button class="drive-button stop" data-command="stop"><b>■</b><span>停止</span><small>STOP</small></button><button class="drive-button" data-command="right"><b>→</b><span>右转</span><small>RIGHT</small></button></div>
+          <button class="drive-button wide" data-command="back"><b>↓</b><span>后退</span><small>BACK</small></button>
+        </div>
+      </div>
+      <div class="metric-grid"><div class="metric"><small>左轮</small><strong id="leftMotorValue">0</strong><em>%</em></div><div class="metric"><small>右轮</small><strong id="rightMotorValue">0</strong><em>%</em></div><div class="metric"><small>连接</small><strong id="connectionTime">--</strong><em>ms</em></div></div>
+      <p class="safety-note">松开驾驶按钮或摇杆后，瓦力会自动停止。</p>
+    </section>
+
+    <section class="page" id="actions">
+      <div class="section-heading"><div><span class="eyebrow">POSES / 02</span><h1>动作库</h1></div></div>
+      <div class="action-grid"><button class="action-card" data-pose="welcome"><span class="action-icon">✦</span><strong>欢迎</strong><small>挥手问候</small></button><button class="action-card" data-pose="nod"><span class="action-icon">↕</span><strong>点头</strong><small>确认回应</small></button><button class="action-card" data-pose="dance"><span class="action-icon">♬</span><strong>舞动</strong><small>全身动作</small></button><button class="action-card" data-pose="reset"><span class="action-icon">↺</span><strong>复位</strong><small>回到初始姿态</small></button></div>
+      <div class="control-card"><div class="card-title"><span>动作速度</span><strong id="actionSpeedValue">60%</strong></div><input type="range" id="actionSpeed" min="10" max="100" value="60"></div>
+    </section>
+
+    <section class="page" id="lights">
+      <div class="section-heading"><div><span class="eyebrow">LIGHTING / 03</span><h1>眼睛灯光</h1></div><label class="switch"><input type="checkbox" id="lightsToggle"><span></span></label></div>
+      <div class="light-preview"><div class="eye-preview" id="eyePreview"><i></i><i></i></div><div><strong id="lightState">灯光关闭</strong><small>WS2812B · 2 LEDs · GPIO 8</small></div></div>
+      <div class="control-card"><div class="card-title"><span>选择颜色</span><output id="colorValue">#F26A2E</output></div><input class="color-input" type="color" id="lightColor" value="#f26a2e"><div class="swatches"><button data-color="#F26A2E" style="--swatch:#F26A2E"></button><button data-color="#44C2A8" style="--swatch:#44C2A8"></button><button data-color="#5D8CFF" style="--swatch:#5D8CFF"></button><button data-color="#D46CFF" style="--swatch:#D46CFF"></button><button data-color="#FFFFFF" style="--swatch:#FFFFFF"></button></div></div>
+      <div class="control-card"><div class="card-title"><span>亮度</span><strong id="brightnessValue">80%</strong></div><input type="range" id="brightness" min="0" max="100" value="80"></div>
+    </section>
+
+    <section class="page" id="servos">
+      <div class="section-heading"><div><span class="eyebrow">ACTUATORS / 04</span><h1>舵机控制</h1></div></div>
+      <div class="servo-list"><div class="servo-row"><div><strong>左臂</strong><small>GPIO 39 · 180°</small></div><output id="leftArmValue">90°</output><input data-servo="leftArm" type="range" min="0" max="180" value="90"></div><div class="servo-row"><div><strong>右臂</strong><small>GPIO 17 · 180°</small></div><output id="rightArmValue">90°</output><input data-servo="rightArm" type="range" min="0" max="180" value="90"></div><div class="servo-row"><div><strong>脖颈</strong><small>GPIO 40 · 180°</small></div><output id="headValue">90°</output><input data-servo="head" type="range" min="0" max="180" value="90"></div></div>
+      <div class="info-banner"><span>i</span><p>左右轮使用驾驶页控制：360° 舵机范围为 -100% 到 100%。</p></div>
+    </section>
+
+    <section class="page" id="music"><div class="section-heading"><div><span class="eyebrow">AUDIO / 05</span><h1>音乐</h1></div></div><div class="music-card"><span class="music-disc">♫</span><div><strong>小智音乐</strong><small>语音说“播放一首歌”即可开始</small></div><span class="music-state">待机</span></div><div class="control-card music-tip"><span>♪</span><p>音乐播放仍由小智语音控制，网页控制面板专注于瓦力动作和灯光。</p></div></section>
+
+    <section class="page" id="settings"><div class="section-heading"><div><span class="eyebrow">SYSTEM / 06</span><h1>连接设置</h1></div></div><div class="control-card"><label class="field-label" for="deviceUrl">设备地址</label><div class="url-field"><input id="deviceUrl" value="http://wali.local"><button id="saveUrl">保存</button></div><small class="field-help">手机与 ESP32 连接同一 Wi-Fi，填写设备 IP 或主机名。</small></div><div class="control-card"><div class="setting-line"><span>自动停止</span><small>松手后停止轮子</small><label class="switch"><input type="checkbox" id="autoStop" checked><span></span></label></div><div class="setting-line"><span>反向左轮</span><small>适配舵机安装方向</small><label class="switch"><input type="checkbox" id="invertLeft"><span></span></label></div></div></section>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js?v=20260823-3"></script>
+</body>
+</html>

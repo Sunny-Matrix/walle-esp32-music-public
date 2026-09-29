@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#12343a">
+  <title>瓦力学习档案</title>
+  <link rel="stylesheet" href="styles.css?v=20260829-2">
+</head>
+<body>
+  <main class="learning-shell">
+    <header class="learning-header">
+      <div class="brand-mark" aria-hidden="true"><span></span><span></span></div>
+      <div><strong>瓦力学习档案</strong><small>WALI LEARNING JOURNAL</small></div>
+      <button class="header-button" id="themeButton" title="切换主题" aria-label="切换主题">◐</button>
+    </header>
+
+    <section class="summary-band">
+      <div><span class="eyebrow">THIS WEEK</span><h1>学习进步，看得见</h1><p>记录瓦力陪伴学习的每一次小突破。</p></div>
+      <div class="summary-mark"><strong id="sessionCount">0</strong><span>次学习</span></div>
+    </section>
+
+    <section class="device-sync">
+      <div><strong>实时同步瓦力问答</strong><small>连接设备后，新的语音问答会自动显示并记录。</small></div>
+      <div class="sync-controls"><input id="deviceUrl" value="http://192.168.1.100" aria-label="瓦力设备地址"><button id="syncButton">连接同步</button><span id="syncState">未连接</span></div>
+    </section>
+
+    <section class="stats-grid" aria-label="学习统计">
+      <div class="stat-card"><span>累计时长</span><strong id="minutesTotal">0</strong><small>分钟</small></div>
+      <div class="stat-card"><span>完成主题</span><strong id="topicCount">0</strong><small>个</small></div>
+      <div class="stat-card"><span>最近学科</span><strong id="latestSubject">--</strong><small id="latestDate">暂无记录</small></div>
+    </section>
+
+    <section class="live-panel" id="livePanel" hidden>
+      <div class="panel-heading"><div><span class="eyebrow">LIVE SESSION</span><h2>本次问答</h2></div><span class="sync-pulse" id="liveState">同步中</span></div>
+      <div class="live-message"><span>我</span><p id="liveQuestion">等待新的问题…</p></div>
+      <div class="live-message wali"><span>瓦</span><p id="liveAnswer">等待瓦力回答…</p></div>
+    </section>
+
+    <section class="content-grid">
+      <div class="records-panel">
+        <div class="panel-heading"><div><span class="eyebrow">JOURNAL</span><h2>学习记录</h2></div><button class="text-button" id="clearRecords">清空记录</button></div>
+        <div id="recordList" class="record-list"></div>
+        <div id="emptyState" class="empty-state"><span>＋</span><strong>还没有学习记录</strong><small>完成一次对话后，瓦力会自动同步本次问答。</small></div>
+      </div>
+
+      <aside class="insights-panel" aria-label="学习成长反馈">
+        <div class="panel-heading"><div><span class="eyebrow">LEARNING INSIGHT</span><h2>成长反馈</h2></div></div>
+        <p class="insight-intro">基于近期真实问答，帮助家长和教师快速了解学习状态。</p>
+        <div class="growth-grid">
+          <article class="growth-card progress-card"><span>近期进步</span><strong id="progressTitle">等待学习记录</strong><p id="progressText">完成一次问答后，这里会归纳学生主动探索的主题。</p></article>
+          <article class="growth-card focus-card"><span>需要巩固</span><strong id="focusTitle">暂无待巩固主题</strong><p id="focusText">系统会根据近期记录提示后续关注方向。</p></article>
+          <article class="growth-card advice-card"><span>下一步建议</span><strong id="adviceTitle">从一个小问题开始</strong><p id="adviceText">先复述关键线索，再尝试解决相似问题。</p></article>
+        </div>
+        <p class="privacy-note">反馈仅保存在当前浏览器，不保存姓名和原始录音。</p>
+      </aside>
+    </section>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js?v=20260829-4"></script>
+</body>
+</html>
