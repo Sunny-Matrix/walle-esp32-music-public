@@ -1,203 +1,97 @@
-# 小智开源音乐固件
+# 瓦力 WALI
 
 （中文 | [English](README_en.md) | [日本語](README_ja.md)）
 
-## 视频
+瓦力 WALI 是一款基于 ESP32-S3 的 AI 学习陪伴设备，面向学生、家长和教师提供语音交互、分步辅学、情绪陪伴、音乐播放、实体动作和移动端网页控制能力。
 
-👉 [【开源】虾哥ai小智机器音乐播放器纯固件带歌词显示](https://www.bilibili.com/video/BV19oM4zqEiz)
+项目将云端大模型的理解与生成能力，同设备端的屏幕、灯光、触摸、扬声器和舵机反馈结合起来，让学习、交流、休息和回顾形成连续体验。
 
-👉 [【开源】虾哥小智音乐播放器纯固件](https://www.bilibili.com/video/BV1RqMEzEEp1)
+## 核心功能
 
-## 介绍
+- **语音交互**：支持唤醒、聆听、思考、回答和退出等设备状态，并通过屏幕和灯光同步反馈。
+- **四级分步辅学**：面向数学、科学、英语和日语等学习问题，按照理解问题、给出线索、检查思路、总结方法逐步引导，避免直接给出答案。
+- **学习总结与回顾**：学习结束后生成本次学习内容、关键思路、困难类型和后续建议，并在独立的学习档案网页中展示。
+- **天气、时间与位置**：首页展示日常信息，为上学、放学和家庭使用提供环境提示。
+- **情绪陪伴**：根据学生的语气和表达内容提供鼓励、安抚或短暂休息建议，并通过语音、眼睛灯和动作进行反馈。
+- **音乐播放**：通过音乐服务检索音频，使用 FFmpeg 完成格式转换和压缩，缓存到本地存储后供设备播放。
+- **实体反馈**：屏幕显示天气、对话、音乐和学习卡片；WS2812B 灯光表达状态；舵机支持头部、手臂和轮组动作。
+- **双网页入口**：设备控制网页用于灯光、头部、手臂和移动控制；学习档案网页用于查看问答摘要和成长反馈。
 
-这是一个由虾哥开源的[ESP32项目](https://github.com/78/xiaozhi-esp32)，以 MIT 许可证发布，允许任何人免费使用，或用于商业用途。
+## 项目结构
 
-我们希望通过这个项目，让大家的小智都能播放歌曲。
+```text
+main/                         ESP32-S3 固件与设备端功能
+main/boards/robot-s3/         瓦力硬件配置、屏幕、音频和引脚定义
+web-control/                  手机端设备控制网页
+web-learning/                 学习记录与成长反馈网页
+music-api-cos/                音乐检索、转码、缓存和 PCM 音频服务
+docs/                         通信协议和开发资料
+```
 
-如果你有任何想法或建议，请随时提出 Issues 或加入 QQ 群：826072986
+## 硬件与接口
 
-项目主要贡献者：空白泡泡糖果 (B站UP)，硅灵造物科技 (B站UP)，小霜霜Meow (B站UP)
+瓦力使用 ESP32-S3 作为主控，配合 240 x 240 LCD、麦克风、扬声器、触摸输入、WS2812B 眼睛灯和多路舵机。具体硬件引脚以 `main/boards/robot-s3/` 下的板级配置为准，不同硬件版本请先核对供电、电平和接口定义。
 
-音乐服务器提供者（为爱发电）：cz
+## 软件环境
 
-### 💡注意事项
+- ESP-IDF 5.4 或更高版本
+- Windows、Linux 或 macOS
+- Python 3
+- Node.js 18 或更高版本（音乐服务）
+- FFmpeg（音乐格式转换）
 
-#### 1. 如果小智说找不到歌曲怎么办？
-进入[小智后台](https://xiaozhi.me/)，找到对应设备，修改角色配置
-- 选择 DeepSeekV3 大语言模型
-- 在人物介绍中填入
-  - 收到音乐相关的需求时，只使用 MPC tool `self.music.play_song` 工具，同时禁止使用 `search_music` 功能。
+### 编译与烧录
 
+在已经加载 ESP-IDF 环境的终端中执行：
 
-#### 3. 暂不支持的开发板
-- ESP32C3芯片的开发板
+```powershell
+cd D:\path\to\walle-esp32-music
+idf.py set-target esp32s3
+idf.py build
+idf.py -p COM14 flash monitor
+```
 
+如果当前终端没有加载 ESP-IDF，请先设置 `IDF_PATH` 或打开 ESP-IDF PowerShell。不要把 Wi-Fi 密码、API Key、Token、数据库密码或本机路径提交到仓库。
 
-### 项目改动范围
+### 启动设备控制网页
 
-#### 新增
-- main\boards\common\music.h
-- main\boards\common\esp32_music.cc
-- main\boards\common\esp32_music.h
+```powershell
+cd web-control
+python -m http.server 8080
+```
 
-#### 修改
-- main\mcp_server.cc
-- main\boards\common\board.cc
-- main\boards\common\board.h
-- main\application.cc
-- main\application.h
-- main\display\display.cc
-- main\display\display.h
-- main\audio\audio_service.cc
-- main\audio\audio_service.h
-- main\idf_component.yml
+手机和电脑连接同一 Wi-Fi 后，在手机浏览器访问 `http://电脑局域网IP:8080`，再在网页设置中填写 ESP32 的局域网 IP。
 
+### 启动学习记录网页
 
+```powershell
+cd web-learning
+python -m http.server 8081
+```
 
-### 基于 MCP 控制万物
+学习页面默认通过浏览器访问 `http://电脑局域网IP:8081`。演示数据可使用页面提供的示例入口，真实记录由后端接口写入后展示。
 
-小智 AI 聊天机器人作为一个语音交互入口，利用 Qwen / DeepSeek 等大模型的 AI 能力，通过 MCP 协议实现多端控制。
+### 启动音乐服务
 
-![通过MCP控制万物](docs/mcp-based-graph.jpg)
+```powershell
+cd music-api-cos
+npm install
+npm start
+```
 
-### 已实现功能
+音乐服务的端口、数据库连接和外部接口配置应写入本地 `.env`，该文件不应上传到 GitHub。公开仓库只保留 `.env.example` 或配置说明。
 
-- 🎭 **丰富的角色定制系统**：支持台湾女友、土豆子、English Tutor 等多种预设角色
-- 🎨 **个性化配置**：自定义助手昵称、对话语言、角色音色和性格介绍
-- 🎵 **智能音乐控制**：支持 `self.music.play_song` 工具进行音乐播放控制
-- 📡 Wi-Fi / ML307 Cat.1 4G 网络连接
-- 🗣️ 离线语音唤醒 [ESP-SR](https://github.com/espressif/esp-sr)
-- 🔗 支持两种通信协议（[Websocket](docs/websocket.md) 或 MQTT+UDP）
-- 🎧 采用 OPUS 音频编解码
-- 🤖 基于流式 ASR + LLM + TTS 架构的语音交互
-- 👤 声纹识别，识别当前说话人的身份 [3D Speaker](https://github.com/modelscope/3D-Speaker)
-- 📺 OLED / LCD 显示屏，支持表情显示
-- 🔋 电量显示与电源管理
-- 🌍 支持多语言（中文、英文、日文）
-- 💻 支持 ESP32-C3、ESP32-S3、ESP32-P4 芯片平台
-- 🏠 通过设备端 MCP 实现设备控制（音量、灯光、电机、GPIO 等）
-- ☁️ 通过云端 MCP 扩展大模型能力（智能家居控制、PC桌面操作、知识搜索、邮件收发等）
+## 安全与配置
 
-## 硬件
+- 不要提交 `.env`、数据库导出文件、私钥、证书、访问令牌或包含真实局域网地址的配置。
+- 生产环境请替换示例密钥，并通过环境变量注入服务端凭据。
+- 网页控制只适用于可信局域网，部署到其他网络前应增加身份认证、请求校验和 HTTPS。
+- 舵机供电应使用符合规格的独立电源，并在软件中设置动作幅度、超时和停止逻辑。
 
-### 面包板手工制作实践
+## 开源说明
 
-详见飞书文档教程：
+本仓库在开源 ESP32 AI 设备软件基础上进行瓦力 WALI 的产品化集成、硬件适配、界面设计、学习场景设计、音乐服务和网页功能扩展。上游许可证与版权声明保留在 `LICENSE` 文件中；使用和再分发本项目时请同时遵守该许可证及各依赖项目的许可证要求。
 
-👉 [《小智 AI 聊天机器人百科全书》](https://ccnphfhqs21z.feishu.cn/wiki/F5krwD16viZoF0kKkvDcrZNYnhb?from=from_copylink)
+## 许可证
 
-面包板效果图如下：
-
-![面包板效果图](docs/v1/wiring2.jpg)
-
-### 支持 70 多个开源硬件（仅展示部分）
-
-- <a href="https://oshwhub.com/li-chuang-kai-fa-ban/li-chuang-shi-zhan-pai-esp32-s3-kai-fa-ban" target="_blank" title="立创·实战派 ESP32-S3 开发板">立创·实战派 ESP32-S3 开发板</a>
-- <a href="https://github.com/espressif/esp-box" target="_blank" title="乐鑫 ESP32-S3-BOX3">乐鑫 ESP32-S3-BOX3</a>
-- <a href="https://docs.m5stack.com/zh_CN/core/CoreS3" target="_blank" title="M5Stack CoreS3">M5Stack CoreS3</a>
-- <a href="https://docs.m5stack.com/en/atom/Atomic%20Echo%20Base" target="_blank" title="AtomS3R + Echo Base">M5Stack AtomS3R + Echo Base</a>
-- <a href="https://gf.bilibili.com/item/detail/1108782064" target="_blank" title="神奇按钮 2.4">神奇按钮 2.4</a>
-- <a href="https://www.waveshare.net/shop/ESP32-S3-Touch-AMOLED-1.8.htm" target="_blank" title="微雪电子 ESP32-S3-Touch-AMOLED-1.8">微雪电子 ESP32-S3-Touch-AMOLED-1.8</a>
-- <a href="https://github.com/Xinyuan-LilyGO/T-Circle-S3" target="_blank" title="LILYGO T-Circle-S3">LILYGO T-Circle-S3</a>
-- <a href="https://oshwhub.com/tenclass01/xmini_c3" target="_blank" title="虾哥 Mini C3">虾哥 Mini C3</a>
-- <a href="https://oshwhub.com/movecall/cuican-ai-pendant-lights-up-y" target="_blank" title="Movecall CuiCan ESP32S3">璀璨·AI 吊坠</a>
-- <a href="https://github.com/WMnologo/xingzhi-ai" target="_blank" title="无名科技Nologo-星智-1.54">无名科技 Nologo-星智-1.54TFT</a>
-- <a href="https://www.seeedstudio.com/SenseCAP-Watcher-W1-A-p-5979.html" target="_blank" title="SenseCAP Watcher">SenseCAP Watcher</a>
-- <a href="https://www.bilibili.com/video/BV1BHJtz6E2S/" target="_blank" title="ESP-HI 超低成本机器狗">ESP-HI 超低成本机器狗</a>
-
-<div style="display: flex; justify-content: space-between;">
-  <a href="docs/v1/lichuang-s3.jpg" target="_blank" title="立创·实战派 ESP32-S3 开发板">
-    <img src="docs/v1/lichuang-s3.jpg" width="240" />
-  </a>
-  <a href="docs/v1/espbox3.jpg" target="_blank" title="乐鑫 ESP32-S3-BOX3">
-    <img src="docs/v1/espbox3.jpg" width="240" />
-  </a>
-  <a href="docs/v1/m5cores3.jpg" target="_blank" title="M5Stack CoreS3">
-    <img src="docs/v1/m5cores3.jpg" width="240" />
-  </a>
-  <a href="docs/v1/atoms3r.jpg" target="_blank" title="AtomS3R + Echo Base">
-    <img src="docs/v1/atoms3r.jpg" width="240" />
-  </a>
-  <a href="docs/v1/magiclick.jpg" target="_blank" title="神奇按钮 2.4">
-    <img src="docs/v1/magiclick.jpg" width="240" />
-  </a>
-  <a href="docs/v1/waveshare.jpg" target="_blank" title="微雪电子 ESP32-S3-Touch-AMOLED-1.8">
-    <img src="docs/v1/waveshare.jpg" width="240" />
-  </a>
-  <a href="docs/v1/lilygo-t-circle-s3.jpg" target="_blank" title="LILYGO T-Circle-S3">
-    <img src="docs/v1/lilygo-t-circle-s3.jpg" width="240" />
-  </a>
-  <a href="docs/v1/xmini-c3.jpg" target="_blank" title="虾哥 Mini C3">
-    <img src="docs/v1/xmini-c3.jpg" width="240" />
-  </a>
-  <a href="docs/v1/movecall-cuican-esp32s3.jpg" target="_blank" title="CuiCan">
-    <img src="docs/v1/movecall-cuican-esp32s3.jpg" width="240" />
-  </a>
-  <a href="docs/v1/wmnologo_xingzhi_1.54.jpg" target="_blank" title="无名科技Nologo-星智-1.54">
-    <img src="docs/v1/wmnologo_xingzhi_1.54.jpg" width="240" />
-  </a>
-  <a href="docs/v1/sensecap_watcher.jpg" target="_blank" title="SenseCAP Watcher">
-    <img src="docs/v1/sensecap_watcher.jpg" width="240" />
-  </a>
-  <a href="docs/v1/esp-hi.jpg" target="_blank" title="ESP-HI 超低成本机器狗">
-    <img src="docs/v1/esp-hi.jpg" width="240" />
-  </a>
-</div>
-
-## 软件
-
-### 固件烧录
-
-新手第一次操作建议先不要搭建开发环境，直接使用免开发环境烧录的固件。
-
-固件默认接入 [xiaozhi.me](https://xiaozhi.me) 官方服务器，个人用户注册账号可以免费使用 Qwen 实时模型。
-
-👉 [新手烧录固件教程](https://ccnphfhqs21z.feishu.cn/wiki/Zpz4wXBtdimBrLk25WdcXzxcnNS)
-
-### 开发环境
-
-- Cursor 或 VSCode
-- 安装 ESP-IDF 插件，选择 SDK 版本 5.4 或以上
-- Linux 比 Windows 更好，编译速度快，也免去驱动问题的困扰
-- 本项目使用 Google C++ 代码风格，提交代码时请确保符合规范
-
-### 开发者文档
-
-- [自定义开发板指南](main/boards/README.md) - 学习如何为小智 AI 创建自定义开发板
-- [MCP 协议物联网控制用法说明](docs/mcp-usage.md) - 了解如何通过 MCP 协议控制物联网设备
-- [MCP 协议交互流程](docs/mcp-protocol.md) - 设备端 MCP 协议的实现方式
-- [一份详细的 WebSocket 通信协议文档](docs/websocket.md)
-
-## 大模型配置
-
-如果你已经拥有一个的小智 AI 聊天机器人设备，并且已接入官方服务器，可以登录 [xiaozhi.me](https://xiaozhi.me) 控制台进行配置。
-
-### 🎭 角色配置指南
-
-在 [xiaozhi.me](https://xiaozhi.me) 控制台中，您可以：
-
-1. **选择角色模板**：从台湾女友、土豆子、English Tutor、好奇小男孩、汪汪队队长等预设角色中选择
-2. **设置助手昵称**：为您的 AI 伴侣起一个专属的名字（默认：小智）
-3. **配置对话语言**：支持普通话、英语、日语等多种语言
-4. **选择角色音色**：清澈小何等多种音色可供选择
-5. **自定义角色介绍**：详细描述角色的性格特点和背景设定
-
-💡 **特别功能**：收到音乐相关需求时，小智会优先使用 `self.music.play_song` 工具，确保音乐播放体验的流畅性。
-
-👉 [后台操作视频教程（旧版界面）](https://www.bilibili.com/video/BV1jUCUY2EKM/)
-
-## 相关开源项目
-
-在个人电脑上部署服务器，可以参考以下第三方开源的项目：
-
-- [xinnan-tech/xiaozhi-esp32-server](https://github.com/xinnan-tech/xiaozhi-esp32-server) Python 服务器
-- [joey-zhou/xiaozhi-esp32-server-java](https://github.com/joey-zhou/xiaozhi-esp32-server-java) Java 服务器
-- [AnimeAIChat/xiaozhi-server-go](https://github.com/AnimeAIChat/xiaozhi-server-go) Golang 服务器
-
-使用小智通信协议的第三方客户端项目：
-
-- [huangjunsen0406/py-xiaozhi](https://github.com/huangjunsen0406/py-xiaozhi) Python 客户端
-- [TOM88812/xiaozhi-android-client](https://github.com/TOM88812/xiaozhi-android-client) Android 客户端
-- [100askTeam/xiaozhi-linux](http://github.com/100askTeam/xiaozhi-linux) 百问科技提供的 Linux 客户端
-- [78/xiaozhi-sf32](https://github.com/78/xiaozhi-sf32) 思澈科技的蓝牙芯片固件
-- [QuecPython/solution-xiaozhiAI](https://github.com/QuecPython/solution-xiaozhiAI) 移远提供的 QuecPython 固件
+本项目遵循仓库中的 `LICENSE` 文件。第三方组件和依赖项仍适用其各自的许可证。

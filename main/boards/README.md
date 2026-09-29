@@ -1,6 +1,6 @@
-# 自定义开发板指南
+# 自定义开发板与瓦力硬件适配指南
 
-本指南介绍如何为小智AI语音聊天机器人项目定制一个新的开发板初始化程序。小智AI支持70多种ESP32系列开发板，每个开发板的初始化代码都放在对应的目录下。
+本指南介绍如何为瓦力 AI 学习陪伴设备定制 ESP32 系列开发板初始化程序。每个开发板的初始化代码都放在对应的目录下，瓦力的屏幕、音频、触摸、灯光和舵机接口也通过板级配置统一管理。
 
 ## 重要提示
 
@@ -332,4 +332,4 @@ DECLARE_BOARD(MyCustomBoard);
 
 - ESP-IDF 文档: https://docs.espressif.com/projects/esp-idf/
 - LVGL 文档: https://docs.lvgl.io/
-- ESP-SR 文档: https://github.com/espressif/esp-sr 
+- ESP-SR 文档: https://github.com/espressif/esp-sr

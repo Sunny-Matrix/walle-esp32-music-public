@@ -8,7 +8,7 @@
 **克隆工程**
 
 ```bash
-git clone https://github.com/78/xiaozhi-esp32.git
+git clone https://github.com/Sunny-Matrix/walle-esp32-music.git
 ```
 
 **进入工程**
