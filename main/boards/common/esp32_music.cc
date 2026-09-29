@@ -27,6 +27,10 @@
 #define MUSIC_SERVER_BASE_URL "http://192.168.1.100:2233"
 #endif
 
+#ifndef MUSIC_AUTH_SECRET
+#define MUSIC_AUTH_SECRET "change-me-in-local-build"
+#endif
+
 // ========== 简单的ESP32认证函数 ==========
 
 /**
@@ -59,7 +63,7 @@ static std::string get_device_chip_id()
 static std::string generate_dynamic_key(int64_t timestamp)
 {
     // 密钥（请修改为与服务端一致）
-    const std::string secret_key = "your-esp32-secret-key-2024";
+    const std::string secret_key = MUSIC_AUTH_SECRET;
 
     // 获取设备信息
     std::string mac = get_device_mac();

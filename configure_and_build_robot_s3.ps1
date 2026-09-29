@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$idfPath = "D:\esp\.espressif\v5.4.4\esp-idf"
+$idfPath = if ($env:IDF_PATH) { $env:IDF_PATH } else { "C:\Espressif\frameworks\esp-idf-v5.4.4" }
 $toolsPath = "C:\Espressif\tools"
 $python = "$toolsPath\python\v5.4.4\venv\Scripts\python.exe"
 $cmakePath = "$toolsPath\cmake\3.30.2\bin"
